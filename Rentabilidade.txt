@@ -1,0 +1,64 @@
+Monetizar um projecto focado no mercado moçambicano exige uma abordagem estratégica, principalmente no que toca aos métodos de pagamento e ao poder de compra local. Como a tua aplicação é uma PWA (o que significa que não pagas as taxas de 30% da Google Play Store ou Apple App Store), tens uma grande vantagem!
+
+Aqui estão as melhores estratégias para ganhares dinheiro com o NutriMoz, adaptadas à realidade de Moçambique:
+1. Modelo Freemium (Grátis + Premium)
+
+Esta é a forma mais eficaz de atrair utilizadores. Ofereces o básico de graça e cobras por funcionalidades avançadas.
+
+    Plano Gratuito: O utilizador pode calcular o seu IMC e gerar apenas o plano diário (como está agora).
+
+    Plano NutriMoz PRO: Cobras um valor acessível (ex: 100 MT por semana ou 300 MT por mês) para desbloquear:
+
+        Geração do Plano Semanal completo.
+
+        Lista de Compras Automática (com base no plano gerado, a app diz exactamente o que comprar no mercado/supermercado).
+
+        Substituição de refeições (se a pessoa não gostar de Matapa num dia, clica para trocar por Caril de Amendoim).
+
+2. Integração de Pagamentos Locais (Crucial)
+
+Em Moçambique, cartões de crédito internacionais (Stripe, PayPal) não funcionam para a massa. O dinheiro móvel é o rei. Precisas de integrar:
+
+    M-Pesa (Vodacom): É obrigatório. A Vodacom tem uma API para desenvolvedores que permite cobrar directamente na app.
+
+    e-Mola (Movitel) e mKesh (Tmcel): Para abranger o resto do país.
+
+    Alternativa mais barata para começar: Em vez de programar uma API complexa logo no início, coloca um botão "Fazer Upgrade para PRO". O botão leva o utilizador para o teu WhatsApp com uma mensagem automática: "Olá, quero ser PRO. Aqui está o comprovativo da transferência M-Pesa de 100 MT." Depois de confirmares, dás-lhe um código ou ativas a conta dele manualmente.
+
+3. Afiliados e Parcerias Locais (B2B)
+
+Como a app fala sobre comida, saúde e ingredientes, tens um grande potencial para parcerias:
+
+    Supermercados e Mercados (Shoprite, Spar, VIP): Podes fechar parcerias onde, na "Lista de Compras", mostras anúncios de promoções reais destes supermercados.
+
+    Ginásios e Personal Trainers: Podes ter uma secção "Treino" ou "Recomendações" onde anuncias ginásios locais (em Maputo, Matola, Beira, etc.) ou vendes os planos de treino de PTs moçambicanos em troca de uma comissão (ex: 20% de cada venda).
+
+    Nutricionistas Reais: A IA é óptima, mas muita gente quer um acompanhamento real. Podes colocar um botão: "Fale com um Nutricionista Moçambicano Certificado". Cobras aos nutricionistas uma mensalidade para estarem listados na tua app ou uma comissão por cada cliente que lhes envies.
+
+4. Venda de Produtos Digitais (E-books)
+
+Muitos utilizadores podem não querer pagar uma assinatura mensal, mas compram um produto único.
+
+    Podes criar um E-book em PDF: "50 Receitas Moçambicanas para Perder Peso" ou "Guia de Hipertrofia com Ingredientes Locais (Batata-doce, Ovo, Amendoim)".
+
+    Vendes o E-book directamente na app por 250 MT a 500 MT pagos via M-Pesa.
+
+5. Publicidade Directa e Local (Não uses apenas Google AdSense)
+
+O Google AdSense paga muito pouco (RPM baixo) pelo tráfego em Moçambique. Em vez disso, vende os espaços publicitários da tua app directamente a empresas locais.
+
+    Lojas de Suplementos: (Ex: lojas que vendem Whey Protein, Creatina em Moçambique).
+
+    Marcas de Produtos Naturais: Vendedores locais de mel, manteiga de amendoim artesanal, sementes de chia, etc.
+
+    Podes cobrar um valor fixo (ex: 5.000 MT/mês) para o logotipo ou banner deles aparecer no fundo da tua app para todos os utilizadores.
+
+💡 Plano de Acção (Como começar amanhã):
+
+    Validação: Não gastes dinheiro a integrar APIs agora. Pega na PWA que tens, partilha no WhatsApp, Facebook e TikTok (o nicho de fitness em Moçambique está a crescer muito no TikTok).
+
+    Recolha de Contactos: Adiciona um campo onde a pessoa deixa o email ou número de WhatsApp antes de gerar o primeiro plano gratuito.
+
+    Monetização Manual (MVP): Cria o botão "Gerar Semana Completa (Apenas 100 MT)". Faz a cobrança manual via M-Pesa no WhatsApp. Se tiveres 10 pessoas por dia a pagar, já validaste a ideia e começaste a faturar!
+
+    Automação: Quando estiveres a ganhar dinheiro com o método manual, usa esse lucro para integrar a API oficial do M-Pesa e um banco de dados real (como o Firebase ou Supabase) para gerir os utilizadores automaticamente.
