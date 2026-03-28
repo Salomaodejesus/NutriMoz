@@ -1,288 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NutriMoz - Saúde Moçambicana</title>
-<!-- Ligação para o Manifest -->
-<link rel="manifest" href="manifest.json">
-
-<!-- Cor da barra de estado no Android e iOS -->
-<meta name="theme-color" content="#146c43">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="NutriMoz">
-
-<!-- Ícone para iOS (Apple) -->
-<link rel="apple-touch-icon" href="icon-192.png">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap');
-  
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  :root {
-    --green: #146c43; --green-light: #e8f5ee; --green-mid: #2b9361; --green-dark: #0f5132;
-    --prot-bg: #e0f2fe; --prot-text: #0284c7;
-    --carb-bg: #ffedd5; --carb-text: #c2410c;
-    --fat-bg: #fce7f3; --fat-text: #be185d;
-    --text: #1e293b; --text2: #64748b; --text3: #94a3b8;
-    --bg: #f1f5f9; --app-bg: #ffffff; --border: #e2e8f0;
-    --radius-lg: 24px; --radius: 16px; --radius-sm: 10px;
-    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-  }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: linear-gradient(135deg, #e8f5ee 0%, #cbd5e1 100%);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* APP CONTAINER - Simulando um telemóvel no desktop */
-  .app {
-    width: 100%;
-    max-width: 420px;
-    height: 100vh;
-    max-height: 850px;
-    background: var(--app-bg);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-  }
-  
-  @media (min-width: 450px) {
-    .app { border-radius: var(--radius-lg); height: 90vh; }
-  }
-
-  /* HEADER */
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.5rem 1.5rem 1rem; background: var(--app-bg); z-index: 10;
-  }
-  .logo { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--green); }
-  .logo span { color: var(--text3); font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; display: block; margin-top: -4px; }
-  
-  .lang-toggle { display: flex; background: var(--bg); border-radius: 20px; padding: 4px; }
-  .lang-btn {
-    padding: 6px 14px; border-radius: 16px; border: none; font-size: 12px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-weight: 700; transition: all 0.3s ease;
-    background: transparent; color: var(--text3);
-  }
-  .lang-btn.active { background: #fff; color: var(--green); box-shadow: var(--shadow-sm); }
-
-  /* MODERN SEGMENTED NAV */
-  .nav-wrapper { padding: 0 1.5rem; background: var(--app-bg); }
-  .nav { display: flex; background: var(--bg); border-radius: var(--radius); padding: 5px; gap: 5px; }
-  .nav-btn {
-    flex: 1; padding: 12px 4px; border: none; background: transparent; border-radius: 12px;
-    font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 700; color: var(--text2);
-    cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .nav-btn.active { background: #fff; color: var(--green); box-shadow: var(--shadow-sm); transform: scale(1.02); }
-
-  /* SCREENS */
-  .screen { display: none; flex: 1; overflow-y: auto; padding: 1.5rem; scrollbar-width: none; }
-  .screen::-webkit-scrollbar { display: none; }
-  .screen.active { display: block; animation: fadeSlideUp 0.4s ease forwards; }
-
-  /* FORMS & INPUTS */
-  .section-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; margin-top: 1.5rem; }
-  .section-label:first-child { margin-top: 0; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  
-  .input-group { position: relative; }
-  .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; opacity: 0.6; pointer-events: none; }
-  input, select {
-    width: 100%; padding: 14px 14px 14px 40px; border: 2px solid transparent; border-radius: var(--radius-sm);
-    font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
-    outline: none; transition: all 0.3s ease; appearance: none;
-  }
-  select { padding-left: 14px; }
-  input:focus, select:focus { background: #fff; border-color: var(--green-mid); box-shadow: 0 0 0 4px var(--green-light); }
-
-  /* GOAL GRID */
-  .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .goal-btn {
-    padding: 16px 10px; border: 2px solid var(--border); border-radius: var(--radius);
-    background: transparent; color: var(--text2); font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
-    cursor: pointer; text-align: center; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .goal-btn .gicon { font-size: 26px; display: block; margin-bottom: 8px; transition: transform 0.2s; }
-  .goal-btn:hover { border-color: var(--green-light); transform: translateY(-2px); }
-  .goal-btn.selected { border-color: var(--green); background: var(--green-light); color: var(--green-dark); font-weight: 700; box-shadow: var(--shadow-sm); }
-  .goal-btn.selected .gicon { transform: scale(1.1); }
-
-  /* BUTTONS */
-  .cta {
-    width: 100%; margin-top: 2rem; padding: 16px; background: var(--green); color: #fff;
-    border: none; border-radius: var(--radius); font-size: 16px; font-weight: 700;
-    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(20, 108, 67, 0.3);
-  }
-  .cta:hover:not(:disabled) { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(20, 108, 67, 0.4); }
-  .cta:active:not(:disabled) { transform: translateY(0); }
-  .cta:disabled { background: var(--border); color: var(--text3); cursor: not-allowed; box-shadow: none; transform: none; }
-
-  /* STATS BAR */
-  .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
-  .stat { background: var(--bg); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; }
-  .stat-val { font-size: 18px; font-weight: 700; color: var(--text); }
-  .stat-lbl { font-size: 11px; font-weight: 500; color: var(--text2); margin-top: 4px; text-transform: uppercase; }
-
-  /* MEAL CARDS - Accordion com CSS Grid */
-  .meal-card {
-    background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 1.25rem; margin-bottom: 12px; cursor: pointer; transition: all 0.3s ease;
-    box-shadow: var(--shadow-sm);
-  }
-  .meal-card:hover { border-color: var(--green-mid); box-shadow: var(--shadow-md); transform: translateY(-2px); }
-  .meal-card.open { border-color: var(--green); background: #fafafa; }
-  
-  .meal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .meal-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--green-mid); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;}
-  .meal-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); line-height: 1.2; }
-  .meal-kcal { font-size: 14px; font-weight: 700; color: var(--text); background: var(--bg); padding: 4px 10px; border-radius: 12px; }
-  .meal-desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-top: 10px; }
-  
-  .macro-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-  .pill { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; display: flex; gap: 3px; align-items: center;}
-  .pill.prot { background: var(--prot-bg); color: var(--prot-text); }
-  .pill.carb { background: var(--carb-bg); color: var(--carb-text); }
-  .pill.fat { background: var(--fat-bg); color: var(--fat-text); }
-
-  /* CSS Grid Accordion Trick */
-  .meal-steps-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-out; }
-  .meal-card.open .meal-steps-wrapper { grid-template-rows: 1fr; margin-top: 16px; }
-  .meal-steps-inner { overflow: hidden; }
-  
-  .steps-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text); margin-bottom: 12px; border-top: 1px solid var(--border); padding-top: 16px; }
-  .step { display: flex; gap: 12px; margin-bottom: 12px; font-size: 13px; color: var(--text2); line-height: 1.6; }
-  .step-num { min-width: 24px; height: 24px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  
-  .toggle-icon { font-size: 18px; color: var(--text3); transition: transform 0.3s ease; }
-  .meal-card.open .toggle-icon { transform: rotate(180deg); color: var(--green); }
-
-  /* WEEKLY TABS */
-  .week-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 1rem; scrollbar-width: none; scroll-behavior: smooth; }
-  .day-tab { flex-shrink: 0; padding: 10px 18px; border: none; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; background: var(--bg); color: var(--text2); transition: all 0.3s; }
-  .day-tab.active { background: var(--text); color: #fff; box-shadow: var(--shadow-sm); transform: translateY(-2px); }
-  .day-plan { display: none; }
-  .day-plan.active { display: block; animation: fadeSlideUp 0.4s ease forwards; }
-
-  /* LOADING & STATES */
-  .week-empty { text-align: center; padding: 4rem 1rem; }
-  .week-empty img { width: 80px; opacity: 0.5; margin-bottom: 1rem; }
-  .week-empty p { color: var(--text3); font-size: 15px; }
-
-  .loading { text-align: center; padding: 5rem 1rem; display: flex; flex-direction: column; align-items: center; }
-  .spinner {
-    width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--green);
-    border-radius: 50%; animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite; margin-bottom: 1.5rem;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading p { font-size: 14px; font-weight: 500; color: var(--text2); animation: pulse 1.5s infinite; }
-
-  /* PROFILE SUMMARY */
-  .profile-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--green-dark); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
-
-  @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-</style>
-</head>
-<body>
-
-<div class="app">
-  <div class="header">
-    <div class="logo">NutriMoz <span>· Saúde moçambicana</span></div>
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('pt')">PT</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-    </div>
-  </div>
-
-  <div class="nav-wrapper">
-    <div class="nav">
-      <button class="nav-btn active" id="nav-profile" onclick="showTab('profile')" data-pt="Perfil" data-en="Profile">Perfil</button>
-      <button class="nav-btn" id="nav-daily" onclick="showTab('daily')" data-pt="Hoje" data-en="Today">Hoje</button>
-      <button class="nav-btn" id="nav-weekly" onclick="showTab('weekly')" data-pt="Semana" data-en="Week">Semana</button>
-    </div>
-  </div>
-
-  <!-- PROFILE SCREEN -->
-  <div class="screen active" id="screen-profile">
-    <div class="section-label" data-pt="Dados pessoais" data-en="Personal info">Dados pessoais</div>
-    <div class="field-row">
-      <div class="input-group">
-        <span class="input-icon">🎂</span>
-        <input type="number" id="age" min="10" max="100" placeholder="Idade / Age" />
-      </div>
-      <div>
-        <select id="sex">
-          <option value="" data-pt="Sexo" data-en="Sex">Sexo</option>
-          <option value="male" data-pt="Masculino" data-en="Male">Masculino</option>
-          <option value="female" data-pt="Feminino" data-en="Female">Feminino</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row" style="margin-top:12px;">
-      <div class="input-group">
-        <span class="input-icon">⚖️</span>
-        <input type="number" id="weight" min="30" max="250" placeholder="Peso (kg)" />
-      </div>
-      <div class="input-group">
-        <span class="input-icon">📏</span>
-        <input type="number" id="height" min="100" max="230" placeholder="Altura (cm)" />
-      </div>
-    </div>
-    
-    <div class="section-label" data-pt="Nível de actividade" data-en="Activity level">Nível de actividade</div>
-    <select id="activity">
-      <option value="" data-pt="Seleccionar..." data-en="Select...">Seleccionar...</option>
-      <option value="sedentary" data-pt="Sedentário (pouco exercício)" data-en="Sedentary (little exercise)">Sedentário (pouco exercício)</option>
-      <option value="light" data-pt="Levemente activo (1–3 dias/sem)" data-en="Lightly active (1–3 days/wk)">Levemente activo (1–3 dias/sem)</option>
-      <option value="moderate" data-pt="Moderadamente activo (3–5 dias/sem)" data-en="Moderately active (3–5 days/wk)">Moderadamente activo (3–5 dias/sem)</option>
-      <option value="active" data-pt="Muito activo (6–7 dias/sem)" data-en="Very active (6–7 days/wk)">Muito activo (6–7 dias/sem)</option>
-    </select>
-    
-    <div class="section-label" data-pt="O meu objectivo" data-en="My goal">O meu objectivo</div>
-    <div class="goal-grid">
-      <button class="goal-btn" data-goal="lose_weight"><span class="gicon">🔥</span><span data-pt="Perder peso" data-en="Lose weight">Perder peso</span></button>
-      <button class="goal-btn" data-goal="gain_muscle"><span class="gicon">💪</span><span data-pt="Ganhar músculo" data-en="Gain muscle">Ganhar músculo</span></button>
-      <button class="goal-btn" data-goal="eat_healthy"><span class="gicon">🥑</span><span data-pt="Comer saudável" data-en="Eat healthy">Comer saudável</span></button>
-      <button class="goal-btn" data-goal="maintain"><span class="gicon">✨</span><span data-pt="Manter peso" data-en="Maintain weight">Manter peso</span></button>
-    </div>
-    
-    <button class="cta" id="save-profile-btn" onclick="saveProfile()" disabled data-pt="Gerar Plano Nutricional" data-en="Generate Nutrition Plan">Gerar Plano Nutricional</button>
-  </div>
-
-  <!-- DAILY SCREEN -->
-  <div class="screen" id="screen-daily">
-    <div id="daily-content">
-      <div class="week-empty">
-        <div style="font-size: 40px; margin-bottom: 10px; opacity:0.8">🥗</div>
-        <p data-pt="Preenche o teu perfil primeiro." data-en="Fill in your profile first.">Preenche o teu perfil primeiro.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEKLY SCREEN -->
-  <div class="screen" id="screen-weekly">
-    <div id="weekly-content">
-      <div class="week-empty">
-        <div style="font-size: 40px; margin-bottom: 10px; opacity:0.8">📅</div>
-        <p data-pt="Gera o plano de hoje primeiro." data-en="Generate today's plan first.">Gera o plano de hoje primeiro.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
 let lang = 'pt';
 let selectedGoal = '';
 let userProfile = null;
@@ -297,8 +12,6 @@ const t = {
     steps: 'Como preparar',
     protein: 'Proteína', carbs: 'Hidratos', fat: 'Gordura', kcal: 'KCAL',
     prot: 'PT', hidr: 'HD', gord: 'GD',
-    days:['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
-    daysFull:['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'],
     genWeek: 'Gerar semana completa',
     regenDay: 'Gerar novo plano',
     profileBadge: (g,kcal) => `🎯 ${goalLabel('pt',g)} · ${kcal} kcal/dia`,
@@ -309,13 +22,34 @@ const t = {
     steps: 'Preparation steps',
     protein: 'Protein', carbs: 'Carbs', fat: 'Fat', kcal: 'KCAL',
     prot: 'PR', hidr: 'CB', gord: 'FT',
-    days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-    daysFull:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
     genWeek: 'Generate full week',
     regenDay: 'Generate new plan',
     profileBadge: (g,kcal) => `🎯 ${goalLabel('en',g)} · ${kcal} kcal/day`,
   }
 };
+
+// 1. FUNÇÃO DO CALENDÁRIO DINÂMICO
+function getDynamicDays() {
+  const today = new Date();
+  const daysArr =[];
+  const ptDays = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const enDays =['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const labels = lang === 'pt' ? ptDays : enDays;
+
+  for (let i = 0; i < 7; i++) {
+    let d = new Date(today);
+    d.setDate(today.getDate() + i);
+    
+    if (i === 0) {
+      daysArr.push(lang === 'pt' ? 'Hoje' : 'Today');
+    } else if (i === 1) {
+      daysArr.push(lang === 'pt' ? 'Amanhã' : 'Tmw');
+    } else {
+      daysArr.push(labels[d.getDay()]);
+    }
+  }
+  return daysArr;
+}
 
 function goalLabel(l, g) {
   const m = {
@@ -341,19 +75,13 @@ function setLang(l) {
     if (el.tagName === 'OPTION') { el.textContent = el.dataset[l]; }
     else if (!el.closest('.goal-btn') || el.tagName === 'SPAN') { el.textContent = el.dataset[l]; }
   });
-  document.querySelectorAll('.goal-btn').forEach(btn => {
-    const span = btn.querySelector('span:last-child');
-    if (span) span.textContent = span.dataset[l];
-  });
-  document.querySelectorAll('.nav-btn').forEach(b => { b.textContent = b.dataset[l]; });
   
-  // Atualizar placeholders
   document.getElementById('age').placeholder = l==='pt'?'Idade':'Age';
   document.getElementById('weight').placeholder = l==='pt'?'Peso (kg)':'Weight (kg)';
   document.getElementById('height').placeholder = l==='pt'?'Altura (cm)':'Height (cm)';
 
   if (dailyPlan) renderDailyPlan(dailyPlan);
-  if (Object.keys(weeklyPlans).length) renderWeeklyScreen();
+  if (userProfile) renderWeeklyScreen(); // Re-renderiza a semana para atualizar o idioma da Paywall
 }
 
 function showTab(tab) {
@@ -361,8 +89,13 @@ function showTab(tab) {
     document.getElementById('screen-' + t).classList.toggle('active', t === tab);
     document.getElementById('nav-' + t).classList.toggle('active', t === tab);
   });
+  
+  if(tab === 'weekly') {
+    renderWeeklyScreen(); // Verifica se é Premium sempre que abre a aba semana
+  }
 }
 
+// Lógica de Seleção de Objetivo
 document.querySelectorAll('.goal-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('selected'));
@@ -370,9 +103,7 @@ document.querySelectorAll('.goal-btn').forEach(btn => {
     selectedGoal = btn.dataset.goal;
     updateProfileBtn();
   });
-});
-
-['age','sex','weight','height','activity'].forEach(id => {
+});['age','sex','weight','height','activity'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('change', updateProfileBtn);
   el.addEventListener('input', updateProfileBtn);
@@ -394,7 +125,7 @@ function calcCalories(p) {
   return tdee;
 }
 
-// FALLBACK INTELIGENTE (Mock API para evitar erros de CORS e Chave de API)
+// Fallback (Mantido igual)
 function getMockPlan(kcalTarget) {
   const isPt = lang === 'pt';
   return {
@@ -402,59 +133,45 @@ function getMockPlan(kcalTarget) {
     meals:[
       {
         type: isPt ? "Pequeno-almoço" : "Breakfast", name: isPt ? "Papa de Milho com Amendoim" : "Corn Porridge with Peanuts",
-        description: isPt ? "Papas quentes de farinha de milho com um toque de manteiga de amendoim e banana." : "Warm cornmeal porridge with a touch of peanut butter and banana.",
+        description: isPt ? "Papas quentes de farinha de milho com manteiga de amendoim." : "Warm cornmeal porridge with peanut butter.",
         calories: Math.round(kcalTarget * 0.25), protein_g: 12, carbs_g: 45, fat_g: 15,
-        steps: isPt ?["Ferver água com uma pitada de sal.","Adicionar farinha de milho aos poucos, mexendo sempre.","Misturar 1 colher de manteiga de amendoim.","Servir com rodelas de banana."] :["Boil water with salt.","Slowly add cornmeal while stirring.","Mix in peanut butter.","Serve with sliced bananas."]
+        steps: isPt ?["Ferver água com sal.","Adicionar farinha aos poucos.","Misturar amendoim."] :["Boil water.","Add cornmeal.","Mix peanut butter."]
       },
       {
         type: isPt ? "Almoço" : "Lunch", name: isPt ? "Matapa com Caranguejo e Xima" : "Matapa with Crab & Xima",
-        description: isPt ? "Clássico prato moçambicano feito com folhas de mandioca, coco, amendoim e caranguejo fresco." : "Classic Mozambican dish made with cassava leaves, coconut, peanuts and fresh crab.",
+        description: isPt ? "Folhas de mandioca com coco, amendoim e caranguejo." : "Cassava leaves with coconut, peanuts and crab.",
         calories: Math.round(kcalTarget * 0.35), protein_g: 35, carbs_g: 50, fat_g: 22,
-        steps: isPt ?["Pilar as folhas de mandioca com alho.","Ferver as folhas com leite de coco e amendoim pilado.","Adicionar o caranguejo limpo e deixar apurar.","Servir bem quente acompanhado de Xima branca."] :["Pound cassava leaves with garlic.","Boil leaves with coconut milk and pounded peanuts.","Add clean crab and let it simmer.","Serve hot with white Xima."]
+        steps: isPt ?["Pilar folhas.","Ferver com coco.","Adicionar caranguejo."] :["Pound leaves.","Boil with coconut.","Add crab."]
       },
       {
-        type: isPt ? "Lanche" : "Snack", name: isPt ? "Batata-doce Assada e Chá" : "Roasted Sweet Potato & Tea",
-        description: isPt ? "Batata-doce de polpa alaranjada, rica em vitamina A, acompanhada de chá de erva-príncipe." : "Orange-fleshed sweet potato, rich in vitamin A, with lemongrass tea.",
+        type: isPt ? "Lanche" : "Snack", name: isPt ? "Batata-doce Assada" : "Roasted Sweet Potato",
+        description: isPt ? "Batata-doce com chá." : "Sweet potato with tea.",
         calories: Math.round(kcalTarget * 0.15), protein_g: 4, carbs_g: 35, fat_g: 1,
-        steps: isPt ?["Lavar bem a batata-doce.","Assar no forno ou nas brasas até ficar macia.","Ferver água com folhas frescas de erva-príncipe.","Servir a batata descascada com o chá quente."] :["Wash the sweet potato well.","Roast in oven or coals until soft.","Boil water with fresh lemongrass.","Serve peeled potato with hot tea."]
+        steps: isPt ?["Lavar batata.","Assar.","Servir com chá."] :["Wash potato.","Roast.","Serve with tea."]
       },
       {
-        type: isPt ? "Jantar" : "Dinner", name: isPt ? "Peixe Grelhado com Salada" : "Grilled Fish with Salad",
-        description: isPt ? "Peixe fresco (carapau ou tilápia) grelhado no carvão, servido com salada de tomate, cebola e pepino." : "Fresh charcoal-grilled fish (mackerel or tilapia) served with tomato, onion and cucumber salad.",
+        type: isPt ? "Jantar" : "Dinner", name: isPt ? "Peixe Grelhado" : "Grilled Fish",
+        description: isPt ? "Peixe fresco grelhado com salada." : "Fresh grilled fish with salad.",
         calories: Math.round(kcalTarget * 0.25), protein_g: 40, carbs_g: 15, fat_g: 12,
-        steps: isPt ?["Temperar o peixe com sal, limão e alho.","Grelhar nas brasas até dourar dos dois lados.","Cortar tomate, cebola e pepino em cubos.","Temperar a salada com um fio de azeite e servir com o peixe."] :["Season fish with salt, lemon and garlic.","Grill on coals until golden on both sides.","Dice tomato, onion and cucumber.","Dress salad with olive oil and serve with fish."]
+        steps: isPt ?["Temperar peixe.","Grelhar.","Fazer salada."] :["Season fish.","Grill.","Make salad."]
       }
     ]
   };
 }
 
 async function callAPI(prompt, p) {
-  // Simulando um tempo de carregamento realista para melhor UX
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(getMockPlan(calcCalories(p)));
-    }, 1800);
-  });
+  return new Promise(resolve => { setTimeout(() => { resolve(getMockPlan(calcCalories(p))); }, 1200); });
 }
 
 function mealCardHTML(meal, idx, l) {
   const steps = (meal.steps ||[]).map((s,i) => `<div class="step"><div class="step-num">${i+1}</div><div>${s}</div></div>`).join('');
   const icon = getMealIcon(meal.type);
-  
-  // Atraso escalonado para a animação de entrada
   const delay = idx * 0.1;
-  
   return `
   <div class="meal-card" onclick="toggleMeal(this)" style="animation: fadeSlideUp 0.5s ease forwards; animation-delay: ${delay}s; opacity: 0;">
     <div class="meal-header">
-      <div>
-        <div class="meal-type"><span>${icon}</span> ${meal.type}</div>
-        <div class="meal-name">${meal.name}</div>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <div class="meal-kcal">${meal.calories}</div>
-        <div class="toggle-icon">▾</div>
-      </div>
+      <div><div class="meal-type"><span>${icon}</span> ${meal.type}</div><div class="meal-name">${meal.name}</div></div>
+      <div style="display:flex; align-items:center; gap:8px;"><div class="meal-kcal">${meal.calories}</div><div class="toggle-icon">▾</div></div>
     </div>
     <div class="meal-desc">${meal.description}</div>
     <div class="macro-pills">
@@ -462,23 +179,16 @@ function mealCardHTML(meal, idx, l) {
       <span class="pill carb">🌾 ${meal.carbs_g}g ${t[l].hidr}</span>
       <span class="pill fat">🥑 ${meal.fat_g}g ${t[l].gord}</span>
     </div>
-    <div class="meal-steps-wrapper">
-      <div class="meal-steps-inner">
-        <div class="steps-title">${t[l].steps}</div>
-        ${steps}
-      </div>
-    </div>
+    <div class="meal-steps-wrapper"><div class="meal-steps-inner"><div class="steps-title">${t[l].steps}</div>${steps}</div></div>
   </div>`;
 }
 
-function toggleMeal(card) { 
-  card.classList.toggle('open'); 
-}
+function toggleMeal(card) { card.classList.toggle('open'); }
 
 function renderDailyPlan(plan) {
   const l = lang;
   const kcal = calcCalories(userProfile);
-  const html = `
+  document.getElementById('daily-content').innerHTML = `
     <div class="profile-pill">${t[l].profileBadge(userProfile.goal, kcal)}</div>
     <div class="stats-bar" style="animation: fadeSlideUp 0.3s ease forwards;">
       <div class="stat"><div class="stat-val">${plan.total_kcal||kcal}</div><div class="stat-lbl">${t[l].kcal}</div></div>
@@ -489,14 +199,32 @@ function renderDailyPlan(plan) {
     ${plan.meals.map((m,i) => mealCardHTML(m,i,l)).join('')}
     <button class="cta" style="margin-top:1rem; animation: fadeSlideUp 0.5s ease forwards; animation-delay: 0.5s; opacity:0;" onclick="regenDaily()">${t[l].regenDay}</button>
   `;
-  document.getElementById('daily-content').innerHTML = html;
 }
 
+// 2. SISTEMA PREMIUM E CALENDÁRIO NA ABA SEMANA
 function renderWeeklyScreen() {
   const l = lang;
-  const days = t[l].days;
-  const hasPlans = Object.keys(weeklyPlans).length > 0;
-  
+
+  // Se o utilizador não for PRO, mostrar a barreira de pagamento (Paywall)
+  if (!userProfile || !userProfile.isPremium) {
+    document.getElementById('weekly-content').innerHTML = `
+      <div class="week-empty" style="padding-top: 3rem; animation: fadeSlideUp 0.4s ease;">
+        <div style="font-size: 55px; margin-bottom: 10px;">⭐</div>
+        <h2 style="color: var(--green-dark); margin-bottom: 12px; font-family: 'DM Serif Display', serif;">NutriMoz PRO</h2>
+        <p style="color: var(--text2); font-size: 14px; margin-bottom: 25px; line-height: 1.5;">
+          ${l === 'pt' ? 'Desbloqueia o plano semanal completo, listas de compras e substituição de refeições por apenas <b>100 MT/Mês</b>.' : 'Unlock the full weekly plan, shopping lists and meal replacements for only <b>100 MT/Month</b>.'}
+        </p>
+        <button class="cta" onclick="buyPremium()" style="background: #e50914; margin-top:0; display:flex; align-items:center; justify-content:center; gap:10px;">
+          📱 ${l === 'pt' ? 'Pagar com M-Pesa (WhatsApp)' : 'Pay via M-Pesa (WhatsApp)'}
+        </button>
+        <p style="margin-top: 20px; font-size: 11px; text-decoration: underline; cursor: pointer; color: var(--text3)" onclick="simulatePayment()">[Dev: Simular Pagamento com Sucesso]</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Se for PRO, renderiza a semana normalmente com os dias dinâmicos
+  const days = getDynamicDays(); // Usa a nossa nova função!
   let tabsHTML = days.map((d,i) => `<button class="day-tab${i===activeDay?' active':''}" onclick="setDay(${i})" id="tab-${i}">${d}</button>`).join('');
   
   let plansHTML = days.map((d,i) => {
@@ -514,10 +242,8 @@ function renderWeeklyScreen() {
     </div>`;
   }).join('');
 
-  let genBtnHTML = '';
-  if (!hasPlans) {
-    genBtnHTML = `<button class="cta week-gen-btn" onclick="generateWeekly()">${t[l].genWeek}</button>`;
-  }
+  const hasPlans = Object.keys(weeklyPlans).length > 0;
+  let genBtnHTML = !hasPlans ? `<button class="cta week-gen-btn" onclick="generateWeekly()">${t[l].genWeek}</button>` : '';
 
   document.getElementById('weekly-content').innerHTML = `
     <div class="week-tabs">${tabsHTML}</div>
@@ -530,19 +256,27 @@ function setDay(i) {
   activeDay = i;
   document.querySelectorAll('.day-tab').forEach((b,j) => b.classList.toggle('active', j===i));
   document.querySelectorAll('.day-plan').forEach((p,j) => p.classList.toggle('active', j===i));
-  // Scroll smooth na aba para que fique visível
   document.getElementById('tab-'+i).scrollIntoView({behavior: "smooth", block: "nearest", inline: "center"});
 }
 
+// 3. GUARDAR E CARREGAR DADOS (LOCALSTORAGE)
 async function saveProfile() {
+  // Mantém o status Premium se o utilizador já for, senão define como false
+  const isPrem = userProfile ? userProfile.isPremium : false; 
+  
   userProfile = {
     age: +document.getElementById('age').value,
     sex: document.getElementById('sex').value,
     weight: +document.getElementById('weight').value,
     height: +document.getElementById('height').value,
     activity: document.getElementById('activity').value,
-    goal: selectedGoal
+    goal: selectedGoal,
+    isPremium: isPrem // Guarda o status Premium
   };
+  
+  // Guardar no Telemóvel
+  localStorage.setItem('nutrimoz_profile', JSON.stringify(userProfile));
+  
   showTab('daily');
   await regenDaily();
 }
@@ -551,40 +285,83 @@ async function regenDaily() {
   document.getElementById('daily-content').innerHTML = `<div class="loading"><div class="spinner"></div><p>${t[lang].generating}</p></div>`;
   dailyPlan = await callAPI('prompt', userProfile);
   weeklyPlans[0] = dailyPlan;
+  
+  // Guarda os planos gerados no telemóvel para não os perder
+  localStorage.setItem('nutrimoz_daily', JSON.stringify(dailyPlan));
+  localStorage.setItem('nutrimoz_weekly', JSON.stringify(weeklyPlans));
+  
   renderDailyPlan(dailyPlan);
 }
 
 async function generateWeekly() {
   document.getElementById('weekly-content').innerHTML = `<div class="loading"><div class="spinner"></div><p>${t[lang].generatingWeek}</p></div>`;
-  weeklyPlans = {};
   if (dailyPlan) weeklyPlans[0] = dailyPlan;
-  
-  // Simulando geração de semana
   for (let i = 0; i < 7; i++) {
-    if (!weeklyPlans[i]) {
-      weeklyPlans[i] = await callAPI('prompt', userProfile);
-    }
+    if (!weeklyPlans[i]) weeklyPlans[i] = await callAPI('prompt', userProfile);
   }
+  
+  localStorage.setItem('nutrimoz_weekly', JSON.stringify(weeklyPlans));
   activeDay = 0;
   renderWeeklyScreen();
 }
 
-// Inicia no idioma por defeito
-setLang('pt');
-</script>
-<script>
-  // Registar o Service Worker para transformar em PWA
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(registration => {
-          console.log('ServiceWorker registado com sucesso com o scope: ', registration.scope);
-        })
-        .catch(err => {
-          console.log('Falha ao registar o ServiceWorker: ', err);
-        });
-    });
+// 4. FUNÇÕES DE PAGAMENTO MVP
+function buyPremium() {
+  // Redireciona para o teu WhatsApp com uma mensagem pré-feita
+  const numero = "258840000000"; // COLOCA AQUI O TEU NÚMERO DE WHATSAPP
+  const mensagem = "Olá, quero subscrever ao NutriMoz PRO por 100 MT mensais. Como faço o pagamento por M-Pesa?";
+  const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url, '_blank');
+}
+
+function simulatePayment() {
+  // Esta função simula que tu aprovaste o pagamento do utilizador
+  if(userProfile) {
+    userProfile.isPremium = true;
+    localStorage.setItem('nutrimoz_profile', JSON.stringify(userProfile));
+    alert(lang === 'pt' ? '🎉 Pagamento confirmado! És agora um membro PRO.' : '🎉 Payment confirmed! You are now PRO.');
+    renderWeeklyScreen(); // Atualiza a tela (o cadeado desaparece)
+  } else {
+    alert('Preenche o teu perfil primeiro na aba "Perfil"!');
+    showTab('profile');
   }
-</script>
-</body>
-</html>
+}
+
+// 5. INICIALIZAÇÃO DA APP (CARREGAR DADOS SALVOS)
+window.addEventListener('load', () => {
+  setLang('pt');
+  
+  // Tentar carregar dados antigos do telemóvel
+  const savedProfile = localStorage.getItem('nutrimoz_profile');
+  const savedDaily = localStorage.getItem('nutrimoz_daily');
+  const savedWeekly = localStorage.getItem('nutrimoz_weekly');
+  
+  if (savedProfile) {
+    userProfile = JSON.parse(savedProfile);
+    // Preencher os campos visuais
+    document.getElementById('age').value = userProfile.age;
+    document.getElementById('sex').value = userProfile.sex;
+    document.getElementById('weight').value = userProfile.weight;
+    document.getElementById('height').value = userProfile.height;
+    document.getElementById('activity').value = userProfile.activity;
+    
+    // Restaurar objetivo selecionado
+    selectedGoal = userProfile.goal;
+    document.querySelectorAll('.goal-btn').forEach(btn => {
+      if(btn.dataset.goal === selectedGoal) btn.classList.add('selected');
+    });
+    
+    updateProfileBtn();
+    
+    if (savedDaily) {
+      dailyPlan = JSON.parse(savedDaily);
+      renderDailyPlan(dailyPlan);
+      // Se ele já tinha um plano salvo, vamos levá-lo direto para a aba "Hoje"
+      showTab('daily'); 
+    }
+    
+    if (savedWeekly) {
+      weeklyPlans = JSON.parse(savedWeekly);
+    }
+  }
+});
